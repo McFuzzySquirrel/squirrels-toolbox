@@ -6,7 +6,37 @@ The README is the entry point to the project, not a second copy of the documenta
 
 ## Title and Introduction
 
-Project name, then one or two sentences stating what the project is and who it is for. Add a logo, badges, or a screenshot of the primary interface when one exists, and link a live demo, walkthrough, or article if available.
+Project name, then one or two sentences stating what the project is and who it is for. Add a logo or a screenshot of the primary interface when one exists, and link a live demo, walkthrough, or article if available.
+
+### Badges
+
+Place badges directly under the project name, before the introduction prose, on one or two lines. Include only signals the project actually publishes, and keep the set to roughly six to eight badges rather than a badge wall. Order them by usefulness to a first-time reader:
+
+| Signal | Typical source | Include only when |
+| --- | --- | --- |
+| CI / build | GitHub Actions workflow badge | The workflow exists, runs on the default branch, and the repository is public. |
+| Release / version | GitHub Releases, npm, PyPI, crates.io, or Docker Hub | The project is actually published there. |
+| Downloads | npm, PyPI, or Docker Hub | Download counts are public and meaningful. |
+| Coverage | Codecov or Coveralls | Coverage is genuinely collected and enforced. |
+| Docs | Read the Docs, docs.rs, or GitHub Pages | The documentation site is live. |
+| License | `shields.io/github/license` | A real `LICENSE` file exists. |
+| Runtime / platform | shields.io static or support-matrix badge | Supported runtimes or platforms are documented. |
+| Security | OpenSSF Scorecard, Snyk, or Socket | The scan is public and current. |
+| Community | Discord, Matrix, contributors, or good-first-issue badge | The channel or program is active and public. |
+| Funding | GitHub Sponsors or Open Collective | The project actually accepts funding. |
+| Made with / ecosystem | Project or ecosystem badge | The technology is part of the project's identity, not incidental. |
+
+Use a dynamic badge for anything that changes, and link every badge to the page that proves it:
+
+```markdown
+[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/OWNER/REPO?sort=semver)](https://github.com/OWNER/REPO/releases)
+[![License](https://img.shields.io/github/license/OWNER/REPO)](LICENSE)
+[![Contributors](https://img.shields.io/github/contributors/OWNER/REPO)](https://github.com/OWNER/REPO/graphs/contributors)
+[![Sponsor](https://img.shields.io/github/sponsors/OWNER)](https://github.com/sponsors/OWNER)
+```
+
+Do not add a badge for a workflow that does not exist, a package that is not published, coverage that is not measured, a license the repository does not have, or a funding program that is not active. Do not hardcode a version, percentage, or download count that will drift. Verify that each image URL resolves and each link points to a real target, and drop vanity badges such as stars, forks, and duplicate language badges unless the requester asks for them. A badge for a private workflow renders publicly as “no status”, so omit it.
 
 ## Table of Contents
 
