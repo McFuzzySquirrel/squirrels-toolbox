@@ -1,4 +1,4 @@
-# convert-to-support-team
+# maintenance-handover
 
 Turn a completed project's build agents and skills into a maintenance team without carrying the build scaffolding forward.
 
@@ -26,10 +26,10 @@ Do not use it to author requirements, start a feature, or migrate a build that i
 Copy the complete skill directory into the skill location used by your assistant:
 
 ```bash
-cp -r collection/skills/convert-to-support-team .agents/skills/
+cp -r collection/skills/maintenance-handover .agents/skills/
 ```
 
-Keep the directory name `convert-to-support-team` unchanged. The package is self-contained and includes its `SKILL.md`, `references/`, and `scripts/`.
+Keep the directory name `maintenance-handover` unchanged. The package is self-contained and includes its `SKILL.md`, `references/`, and `scripts/`.
 
 ## Modes
 
@@ -96,7 +96,7 @@ Run from the target repository. Substitute `.opencode`, `.claude`, `.github`, or
 ### Inventory
 
 ```bash
-node .agents/skills/convert-to-support-team/scripts/inventory.mjs --repo . --json
+node .agents/skills/maintenance-handover/scripts/inventory.mjs --repo . --json
 ```
 
 | Flag | Purpose |
@@ -110,16 +110,16 @@ node .agents/skills/convert-to-support-team/scripts/inventory.mjs --repo . --jso
 
 ```bash
 # Dry run
-node .agents/skills/convert-to-support-team/scripts/apply.mjs --repo . --plan .handoff/plan.json
+node .agents/skills/maintenance-handover/scripts/apply.mjs --repo . --plan .handoff/plan.json
 
 # Archive the approved paths
-node .agents/skills/convert-to-support-team/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply
+node .agents/skills/maintenance-handover/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply
 
 # Remove instead of archiving
-node .agents/skills/convert-to-support-team/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply --delete
+node .agents/skills/maintenance-handover/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply --delete
 
 # Keep an extra path
-node .agents/skills/convert-to-support-team/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply --keep docs/spec.md
+node .agents/skills/maintenance-handover/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply --keep docs/spec.md
 ```
 
 | Flag | Purpose |
@@ -135,7 +135,7 @@ node .agents/skills/convert-to-support-team/scripts/apply.mjs --repo . --plan .h
 ### Verify
 
 ```bash
-node .agents/skills/convert-to-support-team/scripts/verify.mjs --repo . --plan .handoff/plan.json
+node .agents/skills/maintenance-handover/scripts/verify.mjs --repo . --plan .handoff/plan.json
 ```
 
 | Flag | Purpose |
@@ -149,7 +149,7 @@ node .agents/skills/convert-to-support-team/scripts/verify.mjs --repo . --plan .
 ## File Layout
 
 ```text
-convert-to-support-team/
+maintenance-handover/
   SKILL.md
   README.md
   package.json
@@ -169,11 +169,11 @@ convert-to-support-team/
 
 ```bash
 # The skill's own tests
-cd .agents/skills/convert-to-support-team
+cd .agents/skills/maintenance-handover
 npm test
 
 # The handoff gate in the target repository
-node .agents/skills/convert-to-support-team/scripts/verify.mjs --repo . --plan .handoff/plan.json
+node .agents/skills/maintenance-handover/scripts/verify.mjs --repo . --plan .handoff/plan.json
 
 # Whitespace and conflict markers
 git diff --check

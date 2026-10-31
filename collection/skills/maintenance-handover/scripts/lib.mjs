@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-export const SKILL_NAME = "convert-to-support-team";
+export const SKILL_NAME = "maintenance-handover";
 export const HARNESS_ROOTS = [".agents", ".opencode", ".claude", ".github"];
 export const GENERATED_DIRS = [".handoff", ".handoff-archive"];
 export const PLAN_PATH = ".handoff/plan.json";
@@ -735,7 +735,7 @@ export function ensureGitignore(repo) {
   const entries = [".handoff/", ".handoff-archive/"];
   const missing = entries.filter((entry) => !lines.includes(entry) && !lines.includes(entry.replace(/\/$/, "")));
   if (missing.length === 0) return { changed: false, added: [] };
-  const block = ["# convert-to-support-team", ...missing].join("\n");
+  const block = ["# maintenance-handover", ...missing].join("\n");
   const next = existing.trimEnd() ? `${existing.trimEnd()}\n\n${block}\n` : `${block}\n`;
   fs.writeFileSync(file, next);
   return { changed: true, added: missing };

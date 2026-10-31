@@ -1,5 +1,5 @@
 {
-  "name": "convert-to-support-team",
+  "name": "maintenance-handover",
   "version": "1.0.0",
   "type": "module",
   "description": "Convert a completed project's build agents and skills into a repository-derived maintenance team, optionally retiring explicitly approved build artifacts",

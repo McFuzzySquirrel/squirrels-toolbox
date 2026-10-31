@@ -1,9 +1,9 @@
 ---
-name: convert-to-support-team
+name: maintenance-handover
 description: "Convert a completed project's build agents and skills into a repository-derived maintenance team, preserving useful roles, rewriting them as maintainers, and optionally retiring explicitly approved build artifacts. Use when the build is finished, the planning scaffolding should be cleaned up, and the agents should continue as maintainers."
 ---
 
-# Convert to Support Team
+# Build-to-Maintenance Handover
 
 Use this skill after a project's build is complete and accepted. The build
 team stops being a delivery team and becomes the maintenance team. Requirements,
@@ -50,7 +50,7 @@ If a gate fails, stop. Do not remove files to "make room".
 Run the read-only inventory from the installed skill directory:
 
 ```bash
-node .agents/skills/convert-to-support-team/scripts/inventory.mjs --repo . --json
+node .agents/skills/maintenance-handover/scripts/inventory.mjs --repo . --json
 ```
 
 Use the detected harness root instead of `.agents` when it differs. Add
@@ -132,7 +132,7 @@ The plan is working state, not project documentation. Do not commit it.
 ### Step 4: Apply the retirement list
 
 ```bash
-node .agents/skills/convert-to-support-team/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply
+node .agents/skills/maintenance-handover/scripts/apply.mjs --repo . --plan .handoff/plan.json --apply
 ```
 
 By default, the script archives each approved path under
@@ -209,7 +209,7 @@ Active documentation:
 ### Step 8: Verify
 
 ```bash
-node .agents/skills/convert-to-support-team/scripts/verify.mjs --repo . --plan .handoff/plan.json
+node .agents/skills/maintenance-handover/scripts/verify.mjs --repo . --plan .handoff/plan.json
 ```
 
 Add `--strict-coverage` when the team was generated, when the user asks for a
