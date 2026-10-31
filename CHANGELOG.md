@@ -33,6 +33,8 @@ Notable changes to the `mcfuzzy-skills` collection are recorded here.
 
 ### Changed
 
+- Updated the repository README with a linked catalog of every skill, a note that the shared collection stays vendor-neutral, and a link to the license file.
+- Added `collection/skills/convert-to-support-team/README.md` with installation, modes, the approved plan schema, the protected-path list, command reference, validation, scope boundaries, and troubleshooting. Updated the repository skill catalog to link dedicated README files where a skill has one.
 - Updated the `create-project-documentation` ADR template to use stable `ADR-NNNN` front-matter IDs, scoped file globs, imperative agent rules, and concrete verification checks while retaining its MADR decision rationale. Aligned the skill's ADR-writing and validation guidance.
 - Decoupled `create-project-documentation` from `doc-map`. The documentation skill now scopes edits to its selected output artifacts and no longer hands them off for mapping or `AGENTS.md` maintenance; `doc-map` remains an independently invoked, general-purpose mapper for any user-approved repository documents. Synchronized the local development copy of `doc-map` with the packaged skill.
 - Added `add-cross-platform-guidance` to the repository README's skill list.
