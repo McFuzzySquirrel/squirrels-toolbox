@@ -22,6 +22,7 @@ The collection currently includes skills for:
 - Reviewing skills against quality and packaging guidelines.
 - Updating the skill-review process as best practices evolve.
 - Creating or refreshing a defined project documentation suite without maintaining a separate document map.
+- Converting a completed project's build agents and skills into a repository-derived maintenance team, with optional retirement of explicitly approved build artifacts.
 - Creating README files.
 - Turning conversations into structured meeting minutes.
 - Installing cross-platform development rules into a repository's `AGENTS.md`.

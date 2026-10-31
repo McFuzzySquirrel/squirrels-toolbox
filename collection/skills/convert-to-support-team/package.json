@@ -1,0 +1,12 @@
+{
+  "name": "convert-to-support-team",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Convert a completed project's build agents and skills into a repository-derived maintenance team, optionally retiring explicitly approved build artifacts",
+  "scripts": {
+    "test": "node --test scripts/*.test.mjs",
+    "inventory": "node scripts/inventory.mjs",
+    "apply": "node scripts/apply.mjs",
+    "verify": "node scripts/verify.mjs"
+  }
+}
