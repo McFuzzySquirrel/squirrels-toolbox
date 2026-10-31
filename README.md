@@ -19,7 +19,7 @@ The repository is both a library and a workshop: skills can be used in other pro
 |-------|--------------|
 | [`add-cross-platform-guidance`](collection/skills/add-cross-platform-guidance/README.md) | Installs Linux, macOS, and Windows rules in `AGENTS.md`, or creates it, and audits OS assumptions. |
 | [`agent-meeting-minutes`](collection/skills/agent-meeting-minutes/SKILL.md) | Turns a transcript or chat into structured minutes: decisions, action items, open questions, and a summary. |
-| [`convert-to-support-team`](collection/skills/convert-to-support-team/README.md) | Converts build agents and skills into a repository-derived maintenance team, with optional explicit retirement of build artifacts. |
+| [`maintenance-handover`](collection/skills/maintenance-handover/README.md) | Hands a completed build's agents and skills over to a repository-derived maintenance team, with optional explicit retirement of build artifacts. |
 | [`create-project-documentation`](collection/skills/create-project-documentation/SKILL.md) | Creates or refreshes a project documentation suite: README, ADRs, user and admin guides, changelog, and release notes. |
 | [`create-readme`](collection/skills/create-readme/SKILL.md) | Creates a concise, structured README for a project. |
 | [`doc-map`](collection/skills/doc-map/README.md) | Builds a user-approved document map and adds maintenance instructions to `AGENTS.md`. |
