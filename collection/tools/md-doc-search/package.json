@@ -1,0 +1,23 @@
+{
+  "name": "md-doc-search",
+  "version": "0.1.0",
+  "description": "Install incremental Markdown search and an MCP server into a repository",
+  "type": "module",
+  "bin": {
+    "md-doc-search": "./bin/md-doc-search.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "templates/",
+    "docs/",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
