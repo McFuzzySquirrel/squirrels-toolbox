@@ -62,6 +62,26 @@ Also check:
 - [ ] Bundled scripts are non-interactive, document `--help` or usage, and emit actionable errors; use structured output and safety controls when applicable
 - [ ] Skills that produce artifacts or execute workflows have realistic eval cases, an edge case, and observable assertions, unless an explicit exemption is justified
 
+  Eval cases live in `evals/evals.json` at the skill root:
+
+  ```json
+  {
+    "skill": "{skill-name}",
+    "cases": [
+      {
+        "id": "kebab-case-id",
+        "kind": "happy-path",
+        "prompt": "Realistic request a user would make.",
+        "assertions": ["Observable behavior the response must show."]
+      }
+    ]
+  }
+  ```
+
+  Behavior-heavy skills need at least one `happy-path` and one `edge-case` case. `kind` accepts only those two values, so a typo reads as a typo instead of a third category. Each assertion names something visible in the response — a decision made, a command run, a file written — not an internal intention.
+
+  Record an exemption in the skill's own `## Validation` section as `Eval exemption: {why the skill is informational}`. A recorded exemption satisfies this check; a missing `evals/` directory with no such line does not.
+
 ### Step 3: Produce Audit Report
 
 Write the audit report at `docs/SKILL-AUDIT.md` or present it inline, using this structure:

@@ -156,7 +156,7 @@ Each skill is scored 1–3 on six axes. The overall score is the average, rounde
 | **Procedural clarity** | Declares output, no process | Has a process section, missing steps | Step-by-step with decision criteria |
 | **Progressive disclosure** | Everything in one file | Partial use of `references/` or `assets/` | `references/` or `assets/` used with load triggers |
 | **Calibration** | Uniform prescriptiveness | Some structure, could tighten | Exact commands for fragile ops + escape hatches |
-| **Validation** | No verification step | `## Validation` with at least one checkbox | Checklist of 3+ steps with a script or self-check; behavior-heavy skills also provide eval evidence or an explicit exemption |
+| **Validation** | No verification step | `## Validation` with at least one checkbox | Checklist of 3+ steps with a script or self-check; behavior-heavy skills also provide `evals/evals.json` evidence or a recorded `Eval exemption:` |
 
 **Score tiers:**
 - 2.5–3.0 🟢 Strong — follows best practices well

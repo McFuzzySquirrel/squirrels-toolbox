@@ -77,6 +77,7 @@ Work through every item. For each failure: state what is wrong, fix it immediate
 - [ ] At least one validation item is a concrete command or observable artifact
 - [ ] At least one validation item is a checkable file or output (not just "make sure it works")
 - [ ] If the skill has failure modes: at least one recovery path is documented
+- [ ] Evals or an exemption is recorded: behavior-heavy skills have `evals/evals.json` with at least one `happy-path` and one `edge-case` case, each with observable assertions; informational skills state `Eval exemption: {reason}` in `## Validation` **[BLOCKER]**
 
 ---
 

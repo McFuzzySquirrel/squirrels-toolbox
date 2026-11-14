@@ -9,6 +9,11 @@ Version numbers follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Eval file contract** (`SKILL.md` and portable template): `evals/evals.json` now has a documented shape — `skill` plus `cases[]` with `id`, `kind`, `prompt`, and `assertions`. `kind` accepts only `happy-path` and `edge-case`, and behavior-heavy skills need at least one of each, so the "an edge case" requirement is visible in the file rather than implied by prose.
+- **Recorded exemptions**: the guidance now says to write `Eval exemption: {reason}` in the skill's own `## Validation` section. The previous wording required "an explicit exemption" without specifying where to put one, so in practice no exemption was ever recorded.
+
 ### Changed
 
 - **Expanded metadata and activation checks** (`rubric.ts`): validate Agent Skills name constraints, the 1024-character description limit, and task/activation wording instead of only checking parent-directory equality and minimum description length.

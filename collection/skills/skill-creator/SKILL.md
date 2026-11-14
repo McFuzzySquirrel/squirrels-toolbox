@@ -47,6 +47,8 @@ Load the chosen template:
 
 Generate the skill files using the loaded template and interview answers. Use the loaded `references/quality-axes.md` to shape each section; do not copy its scoring explanations into the new skill.
 
+Behavior-heavy skills — those that produce artifacts or execute workflows — also get `evals/evals.json` with at least one `happy-path` and one `edge-case` case. Purely informational skills record `Eval exemption: {reason}` in their `## Validation` section instead. The file shape is defined in `skill-review`'s audit checks.
+
 After generating, check: is `SKILL.md` under 500 lines? If not, move bulk content to `references/`.
 
 ### Step 4: Pre-flight Check
