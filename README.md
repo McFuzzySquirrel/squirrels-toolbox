@@ -1,4 +1,4 @@
-# mcfuzzy-skills
+# Squirrel's Toolbox
 
 A personal collection of reusable AI assistant skills and tools that I find valuable in day-to-day work. Skills capture repeatable workflows; tools provide standalone command-line functionality.
 
