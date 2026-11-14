@@ -6,7 +6,7 @@ This is a standalone Node.js CLI, not an assistant skill. It installs repository
 
 - Node.js 18 or newer to install and run the CLI.
 - Python 3.10 or newer for the installed indexer and MCP server.
-- A Python SQLite build with FTS5 enabled. The index command reports a clear error if FTS5 is missing.
+- A Python SQLite build with FTS5 enabled. `doctor` checks FTS5 availability, and indexing reports a clear error if it is missing.
 - No npm runtime dependencies; the target repo still needs Python for the MCP server and indexer.
 
 ## Install the CLI
@@ -53,18 +53,30 @@ Use `--mcp-config <repo-relative-path>` to write the generic MCP entry elsewhere
 
 The generated `.mcp.json` uses the common `mcpServers` shape and an absolute script path so the server can start regardless of the MCP client's working directory. MCP clients do not share one universal configuration discovery convention: some require manual registration or a client-specific config. The absolute path is local to the checkout; regenerate or adapt the entry after moving/cloning the repository. See [MCP client configuration](docs/mcp-config.md) for adaptation guidance.
 
-## Validate and Use the Index
+## Search and Manage the Index
 
-From the target repository:
+The operational commands default to the current directory; use `--repo` to select another repository. For example:
+
+```bash
+md-doc-search doctor --repo /path/to/repository
+md-doc-search status --repo /path/to/repository
+md-doc-search search "deployment configuration" --repo /path/to/repository
+md-doc-search read docs/deployment.md --start-line 12 --end-line 40 --repo /path/to/repository
+md-doc-search index --repo /path/to/repository --force
+```
+
+`search` synchronizes changed files before returning ranked sections. `status` also synchronizes, then reports indexed Markdown documents, sections, and changes made during that sync; it may create or update `.docs_index.sqlite`. `index` syncs incrementally unless `--force` is passed. `doctor` checks setup and runtime requirements without indexing. `read` prints a repository-relative Markdown range and caps output at 250 lines.
+
+Pass `--json` to get machine-readable output from operational commands. Pass `--python <executable>` to select a Python interpreter, such as one from a virtual environment. `doctor` accepts `--mcp-config <path>` when setup used a non-default MCP config path.
+
+The generated index lives at the repository root in `.docs_index.sqlite`. Its metadata scan compares `mtime_ns` and file size, so it cannot detect an edit that preserves both values. Use `md-doc-search index --repo /path/to/repository --force` to rebuild after such edits.
+
+The Python scripts can also be run directly from the target repository:
 
 ```bash
 python3 scripts/md_index.py index --dir .
 python3 scripts/md_index.py search "deployment configuration"
 ```
-
-The server synchronizes Markdown metadata before each search and returns section line ranges. The generated index lives at the repository root in `.docs_index.sqlite`.
-
-The metadata scan compares `mtime_ns` and file size. It avoids re-reading unchanged files, but cannot detect a same-size edit that preserves its modification timestamp. Use `python3 scripts/md_index.py index --dir . --force` to rebuild after such edits.
 
 For FTS5 errors, setup conflicts, or stale results, see [troubleshooting](docs/troubleshooting.md).
 

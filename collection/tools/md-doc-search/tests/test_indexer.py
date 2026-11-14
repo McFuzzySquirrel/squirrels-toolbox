@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -85,6 +87,82 @@ class MarkdownIndexerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "through a symlink"):
             md_index.sync_index(self.root)
         self.assertEqual(target.read_bytes(), b"not a database")
+
+    def test_status_syncs_and_reports_document_and_section_counts(self) -> None:
+        (self.root / "guide.md").write_text("# Guide\nSearchable text.\n", encoding="utf-8")
+        command = [
+            sys.executable,
+            str(TEMPLATE_DIR / "md_index.py"),
+            "status",
+            "--dir",
+            str(self.root),
+            "--json",
+        ]
+
+        first = subprocess.run(command, capture_output=True, text=True, check=False)
+        self.assertEqual(first.returncode, 0, first.stderr)
+        first_status = json.loads(first.stdout)
+        self.assertEqual(first_status["documents"], 1)
+        self.assertEqual(first_status["sections"], 1)
+        self.assertEqual(first_status["changed"], 1)
+        self.assertEqual(first_status["removed"], 0)
+        self.assertTrue(first_status["initialized"])
+
+        second = subprocess.run(command, capture_output=True, text=True, check=False)
+        self.assertEqual(second.returncode, 0, second.stderr)
+        second_status = json.loads(second.stdout)
+        self.assertEqual(second_status["documents"], 1)
+        self.assertEqual(second_status["sections"], 1)
+        self.assertEqual(second_status["changed"], 0)
+        self.assertFalse(second_status["initialized"])
+
+        (self.root / "guide.md").write_text("# Guide\nUpdated searchable text.\n", encoding="utf-8")
+        (self.root / "extra.md").write_text("# Extra\nAdditional text.\n", encoding="utf-8")
+        changed = subprocess.run(command, capture_output=True, text=True, check=False)
+        self.assertEqual(changed.returncode, 0, changed.stderr)
+        changed_status = json.loads(changed.stdout)
+        self.assertEqual(changed_status["documents"], 2)
+        self.assertEqual(changed_status["sections"], 2)
+        self.assertEqual(changed_status["changed"], 2)
+        self.assertEqual(changed_status["removed"], 0)
+
+        (self.root / "extra.md").unlink()
+        removed = subprocess.run(command, capture_output=True, text=True, check=False)
+        self.assertEqual(removed.returncode, 0, removed.stderr)
+        removed_status = json.loads(removed.stdout)
+        self.assertEqual(removed_status["documents"], 1)
+        self.assertEqual(removed_status["sections"], 1)
+        self.assertEqual(removed_status["changed"], 0)
+        self.assertEqual(removed_status["removed"], 1)
+
+    def test_read_returns_numbered_repository_relative_lines(self) -> None:
+        (self.root / "guide.md").write_text("# Guide\nFirst line.\nSecond line.\n", encoding="utf-8")
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(TEMPLATE_DIR / "md_index.py"),
+                "read",
+                "guide.md",
+                "--start-line",
+                "2",
+                "--end-line",
+                "3",
+                "--dir",
+                str(self.root),
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        section = json.loads(result.stdout)
+        self.assertEqual(section["file_path"], "guide.md")
+        self.assertEqual(section["start_line"], 2)
+        self.assertEqual(section["end_line"], 3)
+        self.assertEqual(section["total_lines"], 3)
+        self.assertEqual(section["lines"], ["First line.", "Second line."])
 
 
 if __name__ == "__main__":

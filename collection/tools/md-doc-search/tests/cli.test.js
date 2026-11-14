@@ -1,14 +1,22 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { setupRepository, SetupConflictError } from "../src/setup.js";
+
+const cliPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../bin/md-doc-search.js");
 
 function temporaryRepo(t) {
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "md-doc-search-"));
   t.after(() => fs.rmSync(repo, { recursive: true, force: true }));
   return repo;
+}
+
+function runCli(args) {
+  return spawnSync(process.execPath, [cliPath, ...args], { encoding: "utf8" });
 }
 
 test("preview is read-only and apply is idempotent", (t) => {
@@ -31,6 +39,151 @@ test("preview is read-only and apply is idempotent", (t) => {
   const config = JSON.parse(fs.readFileSync(path.join(repo, ".mcp.json"), "utf8"));
   assert.equal(config.mcpServers["md-doc-search"].args[0], path.join(repo, "scripts/md_mcp_server.py"));
   assert.deepEqual(setupRepository({ repoPath: repo, apply: true }).changes, []);
+});
+
+test("status syncs and reports document and section counts through the CLI", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+  fs.writeFileSync(path.join(repo, "guide.md"), "# Guide\nSearchable text.\n");
+
+  const python = process.platform === "win32" ? "python" : "python3";
+  const status = runCli(["status", "--repo", repo, "--json", "--python", python]);
+  assert.equal(status.status, 0, status.stderr);
+  const result = JSON.parse(status.stdout);
+  assert.equal(result.documents, 2);
+  assert.equal(result.sections, 3);
+  assert.equal(result.changed, 2);
+  assert.equal(result.removed, 0);
+  assert.equal(result.initialized, true);
+});
+
+test("search syncs and returns ranked matching sections through the CLI", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+  fs.writeFileSync(path.join(repo, "guide.md"), "# Deployment\nUse the blue widget for production rollout.\n");
+
+  const search = runCli(["search", "blue widget", "--repo", repo, "--json"]);
+  assert.equal(search.status, 0, search.stderr);
+  const result = JSON.parse(search.stdout);
+  assert.equal(result.query, "blue widget");
+  assert.equal(result.results[0].file_path, "guide.md");
+  assert.equal(result.results[0].heading_path, "Deployment");
+  assert.match(result.results[0].snippet, /blue/);
+  assert.match(result.results[0].snippet, /widget/);
+});
+
+test("index updates incrementally and rebuilds on force", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+  fs.writeFileSync(path.join(repo, "guide.md"), "# Guide\nIndex this text.\n");
+
+  const index = runCli(["index", "--repo", repo, "--json"]);
+  assert.equal(index.status, 0, index.stderr);
+  assert.deepEqual(JSON.parse(index.stdout), { changed: 2, removed: 0, forced: false });
+
+  const rebuild = runCli(["index", "--repo", repo, "--force", "--json"]);
+  assert.equal(rebuild.status, 0, rebuild.stderr);
+  assert.deepEqual(JSON.parse(rebuild.stdout), { changed: 2, removed: 0, forced: true });
+});
+
+test("read returns a bounded repository-relative range through the CLI", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+  fs.writeFileSync(path.join(repo, "guide.md"), "# Guide\nFirst line.\nSecond line.\n");
+
+  const read = runCli([
+    "read",
+    "guide.md",
+    "--start-line",
+    "2",
+    "--end-line",
+    "3",
+    "--repo",
+    repo,
+    "--json",
+  ]);
+  assert.equal(read.status, 0, read.stderr);
+  const section = JSON.parse(read.stdout);
+  assert.equal(section.file_path, "guide.md");
+  assert.equal(section.start_line, 2);
+  assert.equal(section.end_line, 3);
+  assert.deepEqual(section.lines, ["First line.", "Second line."]);
+});
+
+test("read rejects paths outside the repository and caps output at 250 lines", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+  const outside = fs.mkdtempSync(path.join(os.tmpdir(), "md-doc-search-outside-"));
+  t.after(() => fs.rmSync(outside, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(outside, "private.md"), "outside\n");
+
+  const escapedPath = path.relative(repo, path.join(outside, "private.md"));
+  const rejected = runCli([
+    "read",
+    escapedPath,
+    "--start-line",
+    "1",
+    "--end-line",
+    "1",
+    "--repo",
+    repo,
+  ]);
+  assert.equal(rejected.status, 2);
+  assert.match(rejected.stderr, /path escapes the repository/);
+
+  fs.writeFileSync(path.join(repo, "long.md"), Array.from({ length: 300 }, (_, index) => `Line ${index + 1}`).join("\n"));
+  const bounded = runCli([
+    "read",
+    "long.md",
+    "--start-line",
+    "1",
+    "--end-line",
+    "300",
+    "--repo",
+    repo,
+    "--json",
+  ]);
+  assert.equal(bounded.status, 0, bounded.stderr);
+  const section = JSON.parse(bounded.stdout);
+  assert.equal(section.end_line, 250);
+  assert.equal(section.lines.length, 250);
+});
+
+test("doctor checks installation and runtime without creating the index", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+
+  const doctor = runCli(["doctor", "--repo", repo, "--json"]);
+  assert.equal(doctor.status, 0, doctor.stderr);
+  const result = JSON.parse(doctor.stdout);
+  assert.equal(result.ok, true);
+  assert.equal(result.database_exists, false);
+  assert.ok(result.checks.some((check) => check.name === "SQLite FTS5" && check.ok));
+  assert.equal(fs.existsSync(path.join(repo, ".docs_index.sqlite")), false);
+
+  const customConfig = ".config/mcp.json";
+  const customSetup = runCli(["init", "--repo", repo, "--mcp-config", customConfig, "--apply"]);
+  assert.equal(customSetup.status, 0, customSetup.stderr);
+  const customDoctor = runCli(["doctor", "--repo", repo, "--mcp-config", customConfig, "--json"]);
+  assert.equal(customDoctor.status, 0, customDoctor.stderr);
+  assert.equal(JSON.parse(customDoctor.stdout).ok, true);
+});
+
+test("doctor reports an uninitialized repository as a structured failure", (t) => {
+  const repo = temporaryRepo(t);
+  const doctor = runCli(["doctor", "--repo", repo, "--json"]);
+  assert.equal(doctor.status, 1);
+  const result = JSON.parse(doctor.stdout);
+  assert.equal(result.ok, false);
+  assert.ok(result.checks.some((check) => check.name === "Indexer script" && !check.ok));
+  assert.ok(result.checks.some((check) => check.name === "MCP server script" && !check.ok));
+  assert.ok(result.checks.some((check) => check.name === "SQLite FTS5" && check.ok));
 });
 
 test("existing instructions, ignore rules, and other MCP entries are preserved", (t) => {

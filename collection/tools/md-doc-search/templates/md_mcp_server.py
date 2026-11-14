@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from md_index import require_supported_python, search_index
+from md_index import format_doc_section, read_doc_section, require_supported_python, search_index
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
@@ -70,31 +70,8 @@ def handle_read_section(
     end_line: int,
     root_dir: Path = ROOT_DIR,
 ) -> str:
-    if not isinstance(file_path, str) or not file_path:
-        raise ValueError("file_path must be a non-empty string")
-    if any(isinstance(value, bool) or not isinstance(value, int) for value in (start_line, end_line)):
-        raise ValueError("start_line and end_line must be integers")
-    if start_line < 1 or end_line < start_line:
-        raise ValueError("line range must start at 1 or later and end at or after the start")
-    if Path(file_path).is_absolute():
-        raise ValueError("file_path must be repository-relative")
-
-    root = root_dir.resolve()
-    target = (root / file_path).resolve()
-    try:
-        target.relative_to(root)
-    except ValueError as exc:
-        raise ValueError(f"Invalid file path '{file_path}': path escapes the repository") from exc
-    if target.suffix.lower() != ".md" or not target.is_file():
-        raise ValueError(f"Invalid or missing Markdown file '{file_path}'")
-
-    lines = target.read_text(encoding="utf-8", errors="replace").splitlines()
-    if start_line > len(lines):
-        raise ValueError(f"start_line {start_line} exceeds the file length ({len(lines)} lines)")
-    end = min(len(lines), end_line, start_line + 249)
-    numbered = [f"{number}: {lines[number - 1]}" for number in range(start_line, end + 1)]
-    header = f"--- {file_path} (lines {start_line}-{end} of {len(lines)}) ---\n"
-    return header + "\n".join(numbered)
+    section = read_doc_section(file_path, start_line, end_line, root_dir)
+    return format_doc_section(section)
 
 
 def process_request(request: dict[str, Any], root_dir: Path = ROOT_DIR) -> dict[str, Any] | None:
