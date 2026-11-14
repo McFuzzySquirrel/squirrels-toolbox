@@ -6,6 +6,7 @@ Notable changes to the `mcfuzzy-skills` collection are recorded here.
 
 ### Added
 
+- Added the npm-installable `md-doc-search` CLI under `collection/tools/`. It installs the Python indexer and MCP server, and provides `search`, `status`, `index`, `doctor`, and `read` commands for the target repository.
 - Added a documented eval contract to `skill-review`: `evals/evals.json` at the skill root holds `skill` and `cases[]`, each case with `id`, `kind`, `prompt`, and `assertions`. `kind` accepts only `happy-path` and `edge-case`, and behavior-heavy skills need at least one of each. Exemptions are recorded as `Eval exemption: {reason}` in the skill's own `## Validation` section, because the earlier wording required a justification without saying where to write it. The `SKILL.md`, portable template, and `.agents/` mirror all carry the same contract.
 - Added the matching gate to `skill-creator`: Step 3 scaffolds `evals/evals.json` for behavior-heavy skills or an `Eval exemption:` line for informational ones, and `references/preflight-checklist.md` blocks on neither being present. Synchronized the `.agents/skills/skill-creator/` mirror, which had fallen behind the `collection/` copy after the previous skill-creator edit.
 - Added `evals/evals.json` for `skill-creator` and `skill-review-updater` with a happy path and a documented edge case each, and trimmed duplicated quality-axis and validation guidance from both skills so each rule has one authoritative home.

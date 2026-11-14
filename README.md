@@ -1,17 +1,18 @@
 # mcfuzzy-skills
 
-A personal collection of reusable AI assistant skills that I find valuable in day-to-day work. Each skill captures a repeatable workflow, its constraints, useful reference material, and practical validation steps.
+A personal collection of reusable AI assistant skills and tools that I find valuable in day-to-day work. Skills capture repeatable workflows; tools provide standalone command-line functionality.
 
-The repository is both a library and a workshop: skills can be used in other projects, refined as real work exposes edge cases, and reviewed against the [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices).
+The repository is both a library and a workshop: skills and tools can be used in other projects, refined as real work exposes edge cases, and skills are reviewed against the [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices).
 
 ## What Is Here
 
 | Area | Purpose |
 |------|---------|
 | [`collection/skills/`](collection/skills/) | The reusable skill collection. Each skill is self-contained and can be copied into an assistant skill directory. |
+| [`collection/tools/`](collection/tools/) | Standalone reusable tools, with installation and usage documented per tool. |
 | [`.agents/skills/`](.agents/skills/) | Local development and testing copies of skills used while working on this repository. |
 | [`docs/`](docs/) | Repository-level audits and supporting documentation. |
-| [`CHANGELOG.md`](CHANGELOG.md) | Notable additions and changes to the skill collection. |
+| [`CHANGELOG.md`](CHANGELOG.md) | Notable additions and changes to the skill and tool collections. |
 
 ## Skills
 
@@ -29,6 +30,14 @@ The repository is both a library and a workshop: skills can be used in other pro
 | [`skill-review-updater`](collection/skills/skill-review-updater/SKILL.md) | Compares current best practices with the skill-review rubric and proposes prioritized updates. |
 
 See each skill's `README.md` or `SKILL.md` for activation guidance, inputs, workflow, and validation. Some skills ship helper scripts and list their runtime requirements there.
+
+## Tools
+
+| Tool | What it does |
+|------|--------------|
+| [`md-doc-search`](collection/tools/md-doc-search/README.md) | Installs incremental Markdown search and an MCP server into a target repository. |
+
+Install and run each tool according to its own README; tools are standalone commands, not assistant skills to copy into an agent directory.
 
 ## Using A Skill
 
@@ -50,9 +59,16 @@ The exact destination depends on the assistant or tooling in use. Keep the skill
 
 For the portable skill-review package, see [`collection/skills/skill-review/`](collection/skills/skill-review/). Its embedded audit command can be run with Node.js 18+; Node.js 20+ is recommended.
 
+## Developing A Tool
+
+1. Put standalone command-line tools under `collection/tools/<tool-name>/`.
+2. Keep the executable source, deployable templates, focused tests, and a package-local README together.
+3. Document install commands, runtime requirements, target-repository changes, safety behavior, and validation in that README.
+
 ## Repository Conventions
 
 - Prefer focused, reusable skills over one large skill with unrelated workflows.
+- Keep standalone CLI tools under `collection/tools/` rather than packaging them as assistant skills.
 - Keep the shared collection vendor-neutral; project-specific workflows belong in that project's repository.
 - Keep examples and references close to the skill that uses them.
 - Treat generated or packaged copies as outputs that should be refreshed from their source skill.
