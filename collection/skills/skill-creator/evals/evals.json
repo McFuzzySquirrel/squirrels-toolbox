@@ -1,0 +1,26 @@
+{
+  "skill": "skill-creator",
+  "cases": [
+    {
+      "id": "interview-before-flat-scaffold",
+      "kind": "happy-path",
+      "prompt": "Create a simple skill for converting a CSV to JSON. It has two steps, no branches, no supporting references, and the user wants a validation command.",
+      "assertions": [
+        "The first response gathers the required identity and workflow details before creating files.",
+        "The flat template is selected because the workflow has at most three steps, no branching, and no reference material.",
+        "The user is told the template choice and can override it before scaffolding.",
+        "The completed skill includes matching name metadata, concrete gotchas, and a runnable or observable validation check."
+      ]
+    },
+    {
+      "id": "uncertain-complexity-default",
+      "kind": "edge-case",
+      "prompt": "Create a skill for an unfamiliar deployment workflow. The user cannot estimate the number of steps or identify its failure modes yet.",
+      "assertions": [
+        "The interview asks for missing workflow and failure details instead of inventing project-specific gotchas.",
+        "If the user remains uncertain about complexity, the skill defaults to a modular structure and still allows an override.",
+        "No scaffold is presented as complete before required inputs are gathered."
+      ]
+    }
+  ]
+}

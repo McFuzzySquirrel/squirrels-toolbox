@@ -1,0 +1,26 @@
+{
+  "skill": "skill-review-updater",
+  "cases": [
+    {
+      "id": "evidence-backed-rubric-delta",
+      "kind": "happy-path",
+      "prompt": "Check current agentskills.io best practices against the local skill-review rubric and prepare an update plan.",
+      "assertions": [
+        "The workflow captures the local rubric baseline before evaluating external guidance.",
+        "Each recommended new check has a source citation, a mapped axis, an explicit baseline gap, acceptance criteria, and a confidence tier.",
+        "Equivalent existing checks are marked covered rather than proposed as new.",
+        "The plan prioritizes changes by impact, then confidence."
+      ]
+    },
+    {
+      "id": "source-unavailable",
+      "kind": "edge-case",
+      "prompt": "Prepare the rubric update plan, but agentskills.io cannot be reached and no fresh source evidence is available.",
+      "assertions": [
+        "The workflow reports that source collection is blocked and does not fabricate current guidance.",
+        "Any local artifacts are labeled potentially stale and proposals are downgraded or kept watchlist-only.",
+        "The output includes a recheck trigger and does not present a final adoption recommendation as high-confidence."
+      ]
+    }
+  ]
+}

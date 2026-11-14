@@ -45,19 +45,7 @@ Load the chosen template:
 
 ### Step 3: Scaffold
 
-Generate the skill files using the loaded template and the interview answers. Build each section intentionally against the six quality axes (loaded in the intro).
-
-**Section-by-section guidance:**
-
-| Section | Quality axis | What to do |
-|---------|-------------|------------|
-| YAML frontmatter | - | `name` must match directory name; `description` must include trigger keywords |
-| Opening paragraph | Context economy | State exactly what the skill does and when to use it. No generic preamble. |
-| `## Process` steps | Procedural clarity | Write *how to approach* each step, not just *what to produce*. Include decision criteria. |
-| `## Gotchas` | Gotchas coverage | Add at least two concrete, project-specific edge cases. Use exact pattern: `**{Failure name}.** {What goes wrong and the concrete fix.}` - never generic advice. |
-| Load triggers (modular only) | Progressive disclosure | Each trigger must say *when* to load, not just *what* exists. |
-| `## Validation` | Validation | Include a self-check checklist or concrete commands the agent can run. |
-| Prescriptiveness level | Calibration | Fragile/destructive ops → exact commands. Variable/creative ops → defaults + escape hatches. |
+Generate the skill files using the loaded template and interview answers. Use the loaded `references/quality-axes.md` to shape each section; do not copy its scoring explanations into the new skill.
 
 After generating, check: is `SKILL.md` under 500 lines? If not, move bulk content to `references/`.
 
@@ -80,13 +68,11 @@ Run the formal `skill-review` audit on the newly created skill.
 
 **Check if skill-review is available:**
 
-```bash
-ls .opencode/skills/skill-review/SKILL.md 2>/dev/null || echo "skill-review not found"
-```
+Resolve the active skills root from this `skill-creator` installation and check for the sibling `skill-review/SKILL.md`. Do not assume a particular root such as `.opencode/skills`; this repository, for example, uses `.agents/skills/`.
 
 If `skill-review` is not found, report the prerequisite clearly:
 
-> ⚠️ **skill-review is required for validation.** Install it at `.opencode/skills/skill-review/` before running this step. The skill has been scaffolded but not formally validated.
+> ⚠️ **skill-review is required for validation.** Install it under the active skills root before running this step. The skill has been scaffolded but not formally validated.
 
 If available, invoke it:
 
@@ -100,7 +86,7 @@ If available, invoke it:
 3. Re-run the audit
 4. Stop when all axes score ≥ 2.0 (or the user accepts the current state)
 
-After passing, confirm the install path and remind the user to copy the skill to `.opencode/skills/<skill-name>/`.
+After passing, confirm the install path and remind the user to copy the skill to `<active-skills-root>/<skill-name>/`.
 
 ---
 
@@ -117,15 +103,4 @@ After passing, confirm the install path and remind the user to copy the skill to
 
 ## Validation
 
-After completing the full workflow, verify:
-
-- [ ] `<skill-name>/SKILL.md` exists with valid YAML frontmatter
-- [ ] `name` in frontmatter matches the directory name
-- [ ] `description` contains the trigger keywords from the interview
-- [ ] All six quality axes are intentionally addressed in the skill content
-- [ ] SKILL.md line count is under 500: `wc -l <skill-dir>/SKILL.md` (expect `< 500 <path>`)
-- [ ] YAML frontmatter parses cleanly: `python3 -c "import yaml; yaml.safe_load(open('<skill-dir>/SKILL.md').read())"` exits 0
-- [ ] If modular: `references/` exists with at least one file and all load triggers are specific
-- [ ] Pre-flight checklist passed with no open blockers
-- [ ] `skill-review` audit completed (or prerequisite absence documented); all axes ≥ 2.0
-- [ ] User has been told where to install the skill (`.opencode/skills/<name>/`)
+Use the Step 4 pre-flight checklist, then confirm the formal `skill-review` audit completed (or its absence was reported) and all axes score at least 2.0, unless the user accepts the current state. Confirm the final install path using the active skills root.

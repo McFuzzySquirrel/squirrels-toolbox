@@ -15,10 +15,10 @@ Load [quality baseline](references/quality-baseline.md) now. It defines the evid
 
 ### Step 1: Capture the current skill-review baseline
 
-Start from local ground truth before collecting external guidance. Read the current `skill-review` skill files and extract the checks that are already enforced today. Use an explicit baseline scan command such as `rg -n "Context Economy|Gotchas Coverage|Procedural Clarity|Progressive Disclosure|Calibration|Validation" .opencode/skills/skill-review` and then normalize the findings into rule labels with one primary axis each.
+Start from local ground truth before collecting external guidance. Locate the installed `skill-review/SKILL.md` under the repository's configured skills root (for example, `.agents/skills/` or `.opencode/skills/`), then read its files and extract the checks enforced today. Run a baseline scan such as `rg -n "Context Economy|Gotchas Coverage|Procedural Clarity|Progressive Disclosure|Calibration|Validation" .agents/skills/skill-review`, substituting the discovered path when it differs, then normalize the findings into rule labels with one primary axis each.
 
 **Inputs needed:**
-- Path to the current `skill-review` skill (`.opencode/skills/skill-review/`)
+- Path to the current `skill-review` skill under the active skills root
 - Current rubric/check logic from that skill
 
 **Output:**
@@ -89,7 +89,7 @@ After completing the process, verify:
 - [ ] The output includes three sections: recommended checks, conditional candidates, and watchlist.
 - [ ] Every proposed check has: source citation, mapped rubric axis, gap statement, and acceptance criteria.
 - [ ] No proposed check is marked "new" without a baseline comparison row.
-- [ ] At least one command-backed sanity check was run against local skill-review content, such as `rg -n "Context Economy|Gotchas Coverage|Procedural Clarity|Progressive Disclosure|Calibration|Validation" .opencode/skills/skill-review`.
+- [ ] At least one command-backed sanity check was run against local skill-review content using its discovered path.
 - [ ] The final plan clearly states whether it is **plan-only** or includes direct edit instructions.
 
 If any item fails: fix traceability first (citation and baseline mapping), then rerun the checklist before handoff.
