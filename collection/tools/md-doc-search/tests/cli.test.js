@@ -58,6 +58,32 @@ test("status syncs and reports document and section counts through the CLI", (t)
   assert.equal(result.initialized, true);
 });
 
+test("inspect syncs and lists indexed file metadata and sections through the CLI", (t) => {
+  const repo = temporaryRepo(t);
+  const setup = runCli(["init", "--repo", repo, "--apply"]);
+  assert.equal(setup.status, 0, setup.stderr);
+  fs.writeFileSync(path.join(repo, "guide.md"), "# Guide\nIntro.\n## Details\nMore.\n");
+
+  const inspection = runCli(["inspect", "--repo", repo, "--file", "guide.md", "--json"]);
+  assert.equal(inspection.status, 0, inspection.stderr);
+  const result = JSON.parse(inspection.stdout);
+  assert.equal(result.documents, 1);
+  assert.equal(result.sections, 2);
+  assert.equal(result.files[0].file_path, "guide.md");
+  assert.equal(result.files[0].size, fs.statSync(path.join(repo, "guide.md")).size);
+  assert.match(result.files[0].mtime_ns, /^\d+$/);
+  assert.match(result.files[0].modified, /^\d{4}-\d\d-\d\dT.*\+00:00$/);
+  assert.deepEqual(result.files[0].sections, [
+    { heading_path: "Guide", start_line: 1, end_line: 2 },
+    { heading_path: "Guide > Details", start_line: 3, end_line: 4 },
+  ]);
+
+  const humanReadable = runCli(["inspect", "--repo", repo, "--file", "guide.md"]);
+  assert.equal(humanReadable.status, 0, humanReadable.stderr);
+  assert.match(humanReadable.stdout, /FILE: guide\.md \(size: \d+ bytes, modified:/);
+  assert.match(humanReadable.stdout, /SECTION: Guide > Details \(lines 3-4\)/);
+});
+
 test("search syncs and returns ranked matching sections through the CLI", (t) => {
   const repo = temporaryRepo(t);
   const setup = runCli(["init", "--repo", repo, "--apply"]);

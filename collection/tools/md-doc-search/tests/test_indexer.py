@@ -135,6 +135,36 @@ class MarkdownIndexerTests(unittest.TestCase):
         self.assertEqual(removed_status["changed"], 0)
         self.assertEqual(removed_status["removed"], 1)
 
+    def test_inspect_syncs_and_reports_document_metadata_and_sections(self) -> None:
+        (self.root / "z-guide.md").write_text("# Guide\nIntro.\n## Details\nMore.\n", encoding="utf-8")
+        (self.root / "a-notes.md").write_text("Notes without a heading.\n", encoding="utf-8")
+
+        inspection = md_index.inspect_index(self.root)
+
+        self.assertEqual(inspection["documents"], 2)
+        self.assertEqual(inspection["sections"], 3)
+        self.assertEqual([file["file_path"] for file in inspection["files"]], ["a-notes.md", "z-guide.md"])
+        self.assertEqual(inspection["files"][0]["size"], len(b"Notes without a heading.\n"))
+        self.assertTrue(inspection["files"][0]["mtime_ns"].isdigit())
+        self.assertTrue(inspection["files"][0]["modified"].endswith("+00:00"))
+        self.assertEqual(
+            inspection["files"][1]["sections"],
+            [
+                {"heading_path": "Guide", "start_line": 1, "end_line": 2},
+                {"heading_path": "Guide > Details", "start_line": 3, "end_line": 4},
+            ],
+        )
+
+        filtered = md_index.inspect_index(self.root, "z-guide.md")
+        self.assertEqual(filtered["documents"], 1)
+        self.assertEqual(filtered["sections"], 2)
+        self.assertEqual([file["file_path"] for file in filtered["files"]], ["z-guide.md"])
+        self.assertEqual(md_index.inspect_index(self.root, "missing.md")["files"], [])
+
+        (self.root / "z-guide.md").write_text("# Updated\nIntro.\n## Details\nMore.\n", encoding="utf-8")
+        refreshed = md_index.inspect_index(self.root, "z-guide.md")
+        self.assertEqual(refreshed["files"][0]["sections"][0]["heading_path"], "Updated")
+
     def test_read_returns_numbered_repository_relative_lines(self) -> None:
         (self.root / "guide.md").write_text("# Guide\nFirst line.\nSecond line.\n", encoding="utf-8")
         result = subprocess.run(

@@ -11,6 +11,7 @@ const usage = `Usage:
   md-doc-search init [--repo <path>] [--mcp-config <path>] [--apply] [--force]
   md-doc-search search <query> [--repo <path>] [-k <limit>] [--json]
   md-doc-search status [--repo <path>] [--json]
+  md-doc-search inspect [--repo <path>] [--file <path>] [--json]
   md-doc-search index [--repo <path>] [--force] [--json]
   md-doc-search read <file_path> --start-line <n> --end-line <n> [--repo <path>] [--json]
   md-doc-search doctor [--repo <path>] [--mcp-config <path>] [--json]
@@ -50,6 +51,25 @@ function parseStatusArgs(args) {
       const value = args[index + 1];
       if (!value || value.startsWith("--")) throw new Error("--repo requires a path");
       options.repoPath = value;
+      index += 1;
+    } else {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+  }
+  return options;
+}
+
+function parseInspectArgs(args) {
+  const options = { repoPath: process.cwd(), filePath: undefined, json: false };
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--json") {
+      options.json = true;
+    } else if (arg === "--repo" || arg === "--file") {
+      const value = args[index + 1];
+      if (!value || value.startsWith("--")) throw new Error(`${arg} requires a value`);
+      if (arg === "--repo") options.repoPath = value;
+      else options.filePath = value;
       index += 1;
     } else {
       throw new Error(`Unknown option: ${arg}`);
@@ -287,6 +307,20 @@ export function main(args = process.argv.slice(2)) {
       const { args: rawArgs, python } = extractPythonOption(args.slice(1));
       const options = parseStatusArgs(rawArgs);
       const commandArgs = ["status", "--dir", path.resolve(options.repoPath)];
+      if (options.json) commandArgs.push("--json");
+      return runIndexer(options.repoPath, commandArgs, python);
+    } catch (error) {
+      process.stderr.write(`Error: ${formatError(error)}\n`);
+      return 2;
+    }
+  }
+
+  if (args[0] === "inspect") {
+    try {
+      const { args: rawArgs, python } = extractPythonOption(args.slice(1));
+      const options = parseInspectArgs(rawArgs);
+      const commandArgs = ["inspect", "--dir", path.resolve(options.repoPath)];
+      if (options.filePath !== undefined) commandArgs.push("--file", options.filePath);
       if (options.json) commandArgs.push("--json");
       return runIndexer(options.repoPath, commandArgs, python);
     } catch (error) {

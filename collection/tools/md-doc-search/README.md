@@ -60,12 +60,14 @@ The operational commands default to the current directory; use `--repo` to selec
 ```bash
 md-doc-search doctor --repo /path/to/repository
 md-doc-search status --repo /path/to/repository
+md-doc-search inspect --repo /path/to/repository
+md-doc-search inspect --file docs/deployment.md --repo /path/to/repository
 md-doc-search search "deployment configuration" --repo /path/to/repository
 md-doc-search read docs/deployment.md --start-line 12 --end-line 40 --repo /path/to/repository
 md-doc-search index --repo /path/to/repository --force
 ```
 
-`search` synchronizes changed files before returning ranked sections. `status` also synchronizes, then reports indexed Markdown documents, sections, and changes made during that sync; it may create or update `.docs_index.sqlite`. `index` syncs incrementally unless `--force` is passed. `doctor` checks setup and runtime requirements without indexing. `read` prints a repository-relative Markdown range and caps output at 250 lines.
+`search` synchronizes changed files before returning ranked sections. `status` also synchronizes, then reports indexed Markdown documents, sections, and changes made during that sync; it may create or update `.docs_index.sqlite`. `inspect` synchronizes and lists indexed file paths, sizes, modification times, and section headings with line ranges; use `--file` to narrow it to one repository-relative path. `index` syncs incrementally unless `--force` is passed. `doctor` checks setup and runtime requirements without indexing. `read` prints a repository-relative Markdown range and caps output at 250 lines.
 
 Pass `--json` to get machine-readable output from operational commands. Pass `--python <executable>` to select a Python interpreter, such as one from a virtual environment. `doctor` accepts `--mcp-config <path>` when setup used a non-default MCP config path.
 

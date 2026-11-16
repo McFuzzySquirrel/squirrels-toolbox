@@ -9,6 +9,7 @@ import os
 import re
 import sqlite3
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, TypedDict
 
@@ -265,6 +266,66 @@ def index_status(root_dir: Path = Path(".")) -> dict[str, int | str | bool]:
     }
 
 
+def inspect_index(root_dir: Path = Path("."), file_path: str | None = None) -> dict[str, Any]:
+    """Synchronize and return stored file metadata and indexed section outlines."""
+    if file_path is not None and (not isinstance(file_path, str) or not file_path):
+        raise ValueError("file_path must be a non-empty repository-relative path")
+
+    root = root_dir.expanduser().resolve()
+    sync_index(root)
+    conn = sqlite3.connect(root / DB_NAME)
+    try:
+        if file_path is None:
+            file_rows = conn.execute(
+                "SELECT file_path, mtime_ns, size FROM files ORDER BY file_path"
+            ).fetchall()
+        else:
+            file_rows = conn.execute(
+                "SELECT file_path, mtime_ns, size FROM files WHERE file_path = ? ORDER BY file_path",
+                (file_path,),
+            ).fetchall()
+
+        files: list[dict[str, Any]] = []
+        section_count = 0
+        for indexed_path, mtime_ns, size in file_rows:
+            sections = [
+                {
+                    "heading_path": heading_path,
+                    "start_line": start_line,
+                    "end_line": end_line,
+                }
+                for heading_path, start_line, end_line in conn.execute(
+                    """
+                    SELECT heading_path, start_line, end_line
+                    FROM sections
+                    WHERE file_path = ?
+                    ORDER BY start_line, id
+                    """,
+                    (indexed_path,),
+                )
+            ]
+            section_count += len(sections)
+            files.append({
+                "file_path": indexed_path,
+                "mtime_ns": str(mtime_ns),
+                "modified": datetime.fromtimestamp(
+                    mtime_ns / 1_000_000_000,
+                    tz=timezone.utc,
+                ).isoformat(timespec="seconds"),
+                "size": size,
+                "sections": sections,
+            })
+    finally:
+        conn.close()
+
+    return {
+        "database_path": str(root / DB_NAME),
+        "documents": len(files),
+        "sections": section_count,
+        "files": files,
+    }
+
+
 def read_doc_section(
     file_path: str,
     start_line: int,
@@ -396,6 +457,10 @@ def main(argv: list[str] | None = None) -> int:
     status_parser = subparsers.add_parser("status", help="Sync and report Markdown index state")
     status_parser.add_argument("--dir", type=Path, default=Path.cwd(), help="Root directory to inspect")
     status_parser.add_argument("--json", action="store_true", help="Output machine-readable JSON")
+    inspect_parser = subparsers.add_parser("inspect", help="Sync and show indexed Markdown files and sections")
+    inspect_parser.add_argument("--dir", type=Path, default=Path.cwd(), help="Root directory to inspect")
+    inspect_parser.add_argument("--file", help="Show only this repository-relative indexed Markdown file")
+    inspect_parser.add_argument("--json", action="store_true", help="Output machine-readable JSON")
     read_parser = subparsers.add_parser("read", help="Read a bounded Markdown line range")
     read_parser.add_argument("file_path", help="Repository-relative Markdown file")
     read_parser.add_argument("--start-line", required=True, type=int, help="1-based start line")
@@ -450,6 +515,28 @@ def main(argv: list[str] | None = None) -> int:
                     f"{status['changed']} changed, {status['removed']} removed."
                 )
                 print(f"Database: {status['database_path']}")
+        elif args.command == "inspect":
+            inspection = inspect_index(args.dir, args.file)
+            if args.json:
+                print(json.dumps(inspection))
+            elif not inspection["files"]:
+                print("No indexed Markdown documents found.")
+            else:
+                print(
+                    f"{inspection['documents']} Markdown documents, "
+                    f"{inspection['sections']} sections."
+                )
+                for file in inspection["files"]:
+                    print(
+                        f"FILE: {file['file_path']} "
+                        f"(size: {file['size']} bytes, modified: {file['modified']})"
+                    )
+                    for section in file["sections"]:
+                        print(
+                            f"  SECTION: {section['heading_path']} "
+                            f"(lines {section['start_line']}-{section['end_line']})"
+                        )
+                print(f"Database: {inspection['database_path']}")
         elif args.command == "read":
             section = read_doc_section(args.file_path, args.start_line, args.end_line, args.dir)
             if args.json:
