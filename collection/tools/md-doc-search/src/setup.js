@@ -67,9 +67,8 @@ function updateAgents(existing) {
 
   const section = `${agentsBegin}
 ## Documentation Lookup Protocol
-Never read large \`.md\` files (>300 lines) directly with standard file-reading tools.
-1. Call \`search_docs\` with relevant keywords to locate matching sections and exact line ranges.
-2. Call \`read_doc_section\` with the returned \`file_path\`, \`start_line\`, and \`end_line\`.
+For large reference documents (>300 lines), use \`search_docs\` to locate relevant sections, then \`read_doc_section\` with the returned \`file_path\`, \`start_line\`, and \`end_line\`.
+For instruction files such as \`AGENTS.md\`, \`SKILL.md\`, and custom agent definitions, follow the normal instruction-loading process. Search may help locate them, but search results must not replace the full applicable instructions.
 ${agentsEnd}`;
   if (hasBegin) {
     const start = existing.indexOf(agentsBegin);
