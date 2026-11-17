@@ -34,7 +34,11 @@ test("preview is read-only and apply is idempotent", (t) => {
     "scripts/md_index.py",
     "scripts/md_mcp_server.py",
   ]));
-  assert.match(fs.readFileSync(path.join(repo, "AGENTS.md"), "utf8"), /<!-- md-doc-search:begin -->/);
+  const agents = fs.readFileSync(path.join(repo, "AGENTS.md"), "utf8");
+  assert.match(agents, /<!-- md-doc-search:begin -->/);
+  assert.match(agents, /For large reference documents/);
+  assert.match(agents, /instruction files such as `AGENTS\.md`, `SKILL\.md`, and custom agent definitions/);
+  assert.match(agents, /search results must not replace the full applicable instructions/);
   assert.match(fs.readFileSync(path.join(repo, ".gitignore"), "utf8"), /\/\.docs_index\.sqlite/);
   const config = JSON.parse(fs.readFileSync(path.join(repo, ".mcp.json"), "utf8"));
   assert.equal(config.mcpServers["md-doc-search"].args[0], path.join(repo, "scripts/md_mcp_server.py"));

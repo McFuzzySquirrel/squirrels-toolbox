@@ -51,6 +51,8 @@ Omit `--repo` to target the current directory. The CLI creates or updates:
 
 Use `--mcp-config <repo-relative-path>` to write the generic MCP entry elsewhere. Use `--force` only after reviewing a conflict; it replaces mismatched installed scripts or the `md-doc-search` server entry, but does not replace malformed JSON or repair incomplete AGENTS markers.
 
+The managed `AGENTS.md` lookup rule uses section search for large reference documents. It explicitly preserves normal instruction loading for files such as `AGENTS.md`, `SKILL.md`, and custom agent definitions; search results are not a substitute for their full applicable instructions.
+
 The generated `.mcp.json` uses the common `mcpServers` shape and an absolute script path so the server can start regardless of the MCP client's working directory. MCP clients do not share one universal configuration discovery convention: some require manual registration or a client-specific config. The absolute path is local to the checkout; regenerate or adapt the entry after moving/cloning the repository. See [MCP client configuration](docs/mcp-config.md) for adaptation guidance.
 
 ## Search and Manage the Index
