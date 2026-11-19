@@ -1,0 +1,27 @@
+{
+  "skill": "proof-of-execution",
+  "cases": [
+    {
+      "id": "confirm-and-tag",
+      "kind": "happy-path",
+      "prompt": "Run proof of execution on collection/skills/create-readme using a small sample project, and the user confirms the record.",
+      "assertions": [
+        "The Po block is appended between PO:BEGIN and PO:END markers only after confirming a clean git state for the skill directory.",
+        "The raw record is written outside the repository by default.",
+        "After confirmation the Po block is removed and the SKILL.md hash matches the original before the metadata tag is added.",
+        "Frontmatter gains metadata.po-verified, po-record-sha256, and po-skill-sha256, and no sidecar is written unless a sanitized copy was approved."
+      ]
+    },
+    {
+      "id": "reject-or-abort",
+      "kind": "edge-case",
+      "prompt": "Run proof of execution on a skill, but the run fails midway and the user rejects the record.",
+      "assertions": [
+        "The Po block is still removed and the file is verified identical to the original.",
+        "No po-verified tag is added.",
+        "The raw record is kept outside the repository and no sidecar is created.",
+        "Unevidenced claims in the record are marked unverified rather than invented."
+      ]
+    }
+  ]
+}
