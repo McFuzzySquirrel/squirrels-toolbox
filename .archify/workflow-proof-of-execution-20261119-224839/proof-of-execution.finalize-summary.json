@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "skipped",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/candidate.json",
+    "sha256": "8b3452f60b1b6a1faf453b918163df171354f5c8ac3f230fb84d218b7cd0b421",
+    "bytes": 9157
+  },
+  "artifact": {
+    "path": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.html",
+    "sha256": "6b2b1406b9ee84ce6ec93d0ac4481d8a02fbc9c118ab0211ba4b26d2352d63f4",
+    "bytes": 862778
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "skipped"
+  },
+  "failedStage": "browser-check",
+  "diagnostics": [
+    {
+      "code": "viewer/chrome-unavailable",
+      "severity": "warning",
+      "message": "No supported browser found. Install Chrome/Chromium (or Microsoft Edge), or set ARCHIFY_CHROME to its executable path.",
+      "subject": {
+        "artifact": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.html"
+      },
+      "evidence": {
+        "executable": null
+      },
+      "supportedFixes": [
+        "set ARCHIFY_CHROME to a Chrome/Chromium executable (or Microsoft Edge) and rerun browser-check"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.finalize.json",
+    "summaryReceipt": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.finalize-summary.json",
+    "browserCheckReceipt": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-19T20:55:23.207Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2727,
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  }
+}

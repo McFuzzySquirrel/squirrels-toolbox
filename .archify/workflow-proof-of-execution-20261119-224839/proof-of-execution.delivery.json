@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "4f20e3a8-31cf-48f7-a8b5-702a5fe2853b",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/candidate.json",
+  "output": "/home/mcsquirrel/projects/personal/squirrels-toolbox/.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.html",
+  "specification": {
+    "sha256": "8b3452f60b1b6a1faf453b918163df171354f5c8ac3f230fb84d218b7cd0b421",
+    "bytes": 9157
+  },
+  "artifact": {
+    "sha256": "6b2b1406b9ee84ce6ec93d0ac4481d8a02fbc9c118ab0211ba4b26d2352d63f4",
+    "bytes": 862778
+  }
+}

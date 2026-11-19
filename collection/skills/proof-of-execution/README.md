@@ -2,6 +2,8 @@
 
 Get evidence that a skill actually does what it claims. Po ("proof of") temporarily adds a record-keeping step to a skill, captures what happened in a real run, and, once you confirm the record, removes the step and tags the skill as verified.
 
+[Explore the Proof of Execution workflow diagram](../../../.archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.html).
+
 - Works on any skill you wrote or are evaluating
 - Records stay outside the repository by default, because they may hold sensitive data
 - Optional sanitized sidecar record next to the skill, only with your approval

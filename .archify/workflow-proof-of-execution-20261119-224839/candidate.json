@@ -1,0 +1,247 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Proof of Execution Workflow",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/McFuzzySquirrel/squirrels-toolbox.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "0039baa1b43af4a7f8d84c4a94dd909476edfffa"
+    },
+    "output": ".archify/workflow-proof-of-execution-20261119-224839/proof-of-execution.html"
+  },
+  "lanes": [
+    { "id": "owner", "label": "Skill owner" },
+    { "id": "po_agent", "label": "Proof-of-execution agent" },
+    { "id": "target", "label": "Target skill" },
+    { "id": "stop", "label": "Stop / reject", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "prepare", "label": "Prepare & instrument", "fromCol": 0, "toCol": 1 },
+    { "id": "execute", "label": "Run & capture evidence", "fromCol": 2, "toCol": 3 },
+    { "id": "review", "label": "Review & finalize", "fromCol": 4, "toCol": 5 }
+  ],
+  "mainPath": [
+    "request",
+    "preflight",
+    "instrument",
+    "run",
+    "raw_record",
+    "review_record",
+    "verdict",
+    "restore",
+    "add_metadata",
+    "validate"
+  ],
+  "semanticChecks": {
+    "allowedRoots": ["request"],
+    "allowedTerminals": ["dirty_stop", "abort_cleanup", "reject", "validate"]
+  },
+  "nodes": [
+    {
+      "id": "request",
+      "lane": "owner",
+      "col": 0,
+      "type": "external",
+      "label": "Choose skill + real task",
+      "sublabel": "Target skill + real task",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 22, "end_line": 26 }
+      ]
+    },
+    {
+      "id": "preflight",
+      "lane": "po_agent",
+      "col": 0,
+      "type": "security",
+      "label": "Preflight + baseline",
+      "sublabel": "Clean target + hash; side-effect go-ahead",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 30, "end_line": 36 }
+      ]
+    },
+    {
+      "id": "dirty_stop",
+      "lane": "stop",
+      "col": 1,
+      "type": "security",
+      "label": "Dirty target: stop",
+      "sublabel": "Ask user to commit or stash first",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 32, "end_line": 34 }
+      ]
+    },
+    {
+      "id": "abort_cleanup",
+      "lane": "stop",
+      "col": 3,
+      "type": "security",
+      "label": "Failure / abort cleanup",
+      "sublabel": "Remove Po block, verify baseline; no tag",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 44 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 56, "end_line": 63 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 90 }
+      ]
+    },
+    {
+      "id": "instrument",
+      "lane": "po_agent",
+      "col": 1,
+      "type": "backend",
+      "label": "Append temporary Po step",
+      "sublabel": "Add the marked block at end of SKILL.md",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 38, "end_line": 40 },
+        { "path": "collection/skills/proof-of-execution/references/po-step-snippet.md", "line": 5, "end_line": 15 }
+      ]
+    },
+    {
+      "id": "run",
+      "lane": "target",
+      "col": 2,
+      "type": "backend",
+      "label": "Run target skill",
+      "sublabel": "Task run; Po step runs last",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 42, "end_line": 44 }
+      ]
+    },
+    {
+      "id": "raw_record",
+      "lane": "po_agent",
+      "col": 3,
+      "type": "backend",
+      "label": "Write raw evidence record",
+      "sublabel": "Outside repo; observable facts only",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 24, "end_line": 26 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 46, "end_line": 48 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 85 }
+      ]
+    },
+    {
+      "id": "review_record",
+      "lane": "owner",
+      "col": 4,
+      "type": "external",
+      "label": "Review the record",
+      "sublabel": "Review evidence; optional sidecar",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 50, "end_line": 54 }
+      ]
+    },
+    {
+      "id": "sanitized_approval",
+      "lane": "owner",
+      "col": 5,
+      "type": "security",
+      "label": "Sanitize + approve copy",
+      "sublabel": "Optional; review every redaction",
+      "yOffset": -55,
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 52, "end_line": 54 },
+        { "path": "collection/skills/proof-of-execution/references/sanitization-checklist.md", "line": 3, "end_line": 21 }
+      ]
+    },
+    {
+      "id": "verdict",
+      "lane": "owner",
+      "col": 5,
+      "type": "security",
+      "label": "Explicit verdict",
+      "sublabel": "Explicit confirm or reject",
+      "yOffset": 55,
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 54 }
+      ]
+    },
+    {
+      "id": "restore",
+      "lane": "po_agent",
+      "col": 5,
+      "type": "backend",
+      "label": "Always remove Po step",
+      "sublabel": "Remove Po block; verify hash",
+      "yOffset": -60,
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 56, "end_line": 61 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 90 }
+      ]
+    },
+    {
+      "id": "reject",
+      "lane": "stop",
+      "col": 5,
+      "type": "security",
+      "label": "Reject: no tag",
+      "sublabel": "Keep raw record outside repo",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 63 }
+      ]
+    },
+    {
+      "id": "add_metadata",
+      "lane": "target",
+      "col": 5,
+      "type": "backend",
+      "label": "Confirm: add Po tag",
+      "sublabel": "Optional: approved sanitized copy",
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 65, "end_line": 74 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 7, "end_line": 10 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 86, "end_line": 87 }
+      ]
+    },
+    {
+      "id": "validate",
+      "lane": "po_agent",
+      "col": 5,
+      "type": "backend",
+      "label": "Validate final state",
+      "sublabel": "No markers; diff + frontmatter valid",
+      "yOffset": 60,
+      "sources": [
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 76, "end_line": 80 },
+        { "path": "collection/skills/proof-of-execution/SKILL.md", "line": 94, "end_line": 100 }
+      ]
+    }
+  ],
+  "edges": [
+    { "id": "request-preflight", "from": "request", "to": "preflight", "label": "target + task", "variant": "emphasis" },
+    { "id": "preflight-dirty", "from": "preflight", "to": "dirty_stop", "label": "dirty", "variant": "security", "role": "error" },
+    { "id": "preflight-instrument", "from": "preflight", "to": "instrument", "label": "clean; any needed go-ahead received" },
+    { "id": "instrument-run", "from": "instrument", "to": "run", "label": "temporary step appended", "variant": "emphasis" },
+    { "id": "run-record", "from": "run", "to": "raw_record", "label": "run completes" },
+    { "id": "run-abort-cleanup", "from": "run", "to": "abort_cleanup", "label": "fails or aborts", "variant": "security", "role": "error", "fromSide": "bottom", "toSide": "top" },
+    { "id": "raw-review", "from": "raw_record", "to": "review_record", "label": "show to user", "variant": "emphasis" },
+    { "id": "review-verdict", "from": "review_record", "to": "verdict", "label": "no sidecar requested" },
+    { "id": "review-sanitize", "from": "review_record", "to": "sanitized_approval", "label": "sidecar requested", "variant": "dashed", "role": "branch" },
+    { "id": "approval-verdict", "from": "sanitized_approval", "to": "verdict", "label": "approved text" },
+    { "id": "verdict-restore", "from": "verdict", "to": "restore", "label": "always, either verdict", "variant": "emphasis" },
+    { "id": "restore-reject", "from": "restore", "to": "reject", "label": "reject", "variant": "security", "role": "branch" },
+    { "id": "restore-confirm", "from": "restore", "to": "add_metadata", "label": "explicit confirm only", "variant": "emphasis" },
+    { "id": "confirm-validate", "from": "add_metadata", "to": "validate" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "What the Po tag means",
+      "items": [
+        "A human confirmed one recorded run; it does not prove general correctness.",
+        "Any later SKILL.md edit makes the recorded skill hash stale."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Evidence handling",
+      "items": [
+        "The raw record stays outside the repository because it can contain secrets or personal data.",
+        "A sidecar is optional and is written only after explicit confirmation and sanitized-copy approval."
+      ]
+    }
+  ]
+}
