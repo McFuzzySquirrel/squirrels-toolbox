@@ -24,6 +24,7 @@ The repository is both a library and a workshop: skills and tools can be used in
 | [`create-project-documentation`](collection/skills/create-project-documentation/SKILL.md) | Creates or refreshes a project documentation suite: README, ADRs, user and admin guides, changelog, and release notes, and records their upkeep rules in `AGENTS.md`. |
 | [`create-readme`](collection/skills/create-readme/SKILL.md) | Creates a concise, structured README for a project. |
 | [`doc-map`](collection/skills/doc-map/README.md) | Builds a user-approved document map and adds maintenance instructions to `AGENTS.md`. |
+| [`proof-of-execution`](collection/skills/proof-of-execution/SKILL.md) | Records a user-confirmed proof of execution for a skill by temporarily instrumenting it, then removes the step and adds a `po-verified` metadata tag. |
 | [`repo-story-time`](collection/skills/repo-story-time/README.md) | Tells a repository's story from its structure and Git history, with evidence-backed narrative. |
 | [`skill-creator`](collection/skills/skill-creator/SKILL.md) | Interviews you and scaffolds a new skill, validated against the skill-review rubric. |
 | [`skill-review`](collection/skills/skill-review/README.md) | Audits skills against agentskills.io best practices and scores six quality axes. |
