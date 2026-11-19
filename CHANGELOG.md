@@ -6,6 +6,8 @@ Notable changes to the `mcfuzzy-skills` collection are recorded here.
 
 ### Added
 
+- Added a `Po tag check` pull request workflow (`.github/workflows/po-check.yml`). Newly added `collection/skills/*/SKILL.md` files must carry `metadata.po-verified`, `po-record-sha256`, and `po-skill-sha256` and no leftover `PO:BEGIN` block; modified existing skills are not checked.
+
 - Added the `proof-of-execution` (Po) skill. It temporarily appends a record-keeping step to a chosen skill, captures evidence from a real run in a record kept outside the repository, supports a user-approved sanitization pass for an optional sidecar, and on explicit confirmation removes the step and adds `metadata.po-verified` with record and skill hashes to the frontmatter.
 
 - Added the npm-installable `md-doc-search` CLI under `collection/tools/`. It installs the Python indexer and MCP server, and provides `search`, `status`, `index`, `doctor`, and `read` commands for the target repository.
